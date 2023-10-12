@@ -14,8 +14,14 @@ const (
 	OR
 )
 
+var component_counter int = 0
+var gate_counter      int = 0
+var pin_counter       int = 0
+var wire_counter      int = 0
+
 // has state and pointer to gate to which it is connected
 type Pin struct {
+	number	int
 	p_state bool
 	gate 	*Gate
 }
@@ -23,6 +29,7 @@ type Pin struct {
 // has type, state, array of pointers to pins that are connected
 // to it, a pointer to the wire to whuich it is connected
 type Gate struct {
+	number 	int
 	g_type	TGate
 	g_state bool
 	pins 	[]*Pin
@@ -31,8 +38,24 @@ type Gate struct {
 
 // has state and array of pointers to pins to which it is connected
 type Wire struct {
+	number	 int
 	w_state  bool
 	transmit []*Pin
+}
+
+type Component struct {
+	name		string
+	number      int
+	gates 		[]*Gate
+	pins  		[]*Pin
+	wires 		[]*Wire
+	exposed_in 	[]*Pin
+	exposed_out *Wire
+}
+
+func NewComponent(name string, number_of_inputs int) Component {
+	component_counter++
+	return Component{name: name, number: component_counter, exposed_in: make([]*Pin, number_of_inputs)}
 }
 
 // called when wire should chage its state, the caller is gate
@@ -105,6 +128,10 @@ func (g *Gate) report_state_NOT() {
 
 func main() {
 	fmt.Print("\nSimple Truth Table Solver\n\n")
+
+	//var component = NewComponent("NAND Gate", 2)
+
+	
 
 	// declare all gates, i/o buffers are also gates
 	var gate_and Gate
